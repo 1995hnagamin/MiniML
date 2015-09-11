@@ -1,5 +1,12 @@
 %{
 open Syntax
+
+let f_plus = FunExp ("x", FunExp ("y", BinOp (Plus, Var "x", Var "y")))
+let f_mult = FunExp ("x", FunExp ("y", BinOp (Mult, Var "x", Var "y")))
+let f_lt   = FunExp ("x", FunExp ("y", BinOp (Lt, Var "x", Var "y")))
+let f_and  = FunExp ("x", FunExp ("y", BinOp (And, Var "x", Var "y")))
+let f_or   = FunExp ("x", FunExp ("y", BinOp (Or, Var "x", Var "y")))
+;;
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
@@ -54,6 +61,7 @@ AExpr :
   | FALSE { BLit false }
   | ID { Var $1 }
   | LPAREN Expr RPAREN { $2 }
+  | LPAREN Infix RPAREN { $2 }
 
 IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
@@ -63,6 +71,13 @@ LetExpr :
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
+
+Infix :
+    PLUS    { f_plus }
+  | MULT    { f_mult }
+  | LT      { f_lt }
+  | ANDAND  { f_and }
+  | OROR    { f_or }
 
 Binding :
     Equality ANDLIT Binding { $1::$3 }
