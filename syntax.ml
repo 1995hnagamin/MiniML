@@ -11,6 +11,9 @@ type exp =
   | BinOp of binOp * exp * exp
   | IfExp of exp * exp * exp 
   | LetExp of (id * exp) list * exp
+  | FunExp of id * exp
+  | DFunExp of id * exp
+  | AppExp of exp * exp
 ;;
 
 type program = 

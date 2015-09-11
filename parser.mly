@@ -1,9 +1,25 @@
 %{
 open Syntax
+open Util
+
+let f_plus = FunExp ("+l", FunExp ("+r", BinOp (Plus, Var "+l", Var "+r")))
+let f_mult = FunExp ("*l", FunExp ("*r", BinOp (Mult, Var "*l", Var "*r")))
+let f_lt   = FunExp ("<l", FunExp ("<r", BinOp (Lt,   Var "<l", Var "<r")))
+let f_and  = FunExp ("&l", FunExp ("&r", BinOp (And,  Var "&l", Var "&r")))
+let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
+;;
+
+let fold_args args body =
+  fold_right (fun x body -> FunExp (x, body)) body args
+
+let fold_argsd args body =
+  fold_right (fun x body -> DFunExp (x, body)) body args
+;;
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
 %token IF THEN ELSE LET IN ANDLIT TRUE FALSE
+%token DFUN FUN RARROW
 
 %token <int> INTV
 %token <Syntax.id> ID
@@ -20,6 +36,7 @@ Expr :
     IfExpr { $1 }
   | LetExpr { $1 }
   | BExpr { $1 }
+  | FunExpr { $1 }
 
 LetDecl :
     LET Binding { $2 }
@@ -39,7 +56,11 @@ PExpr :
   | MExpr { $1 }
 
 MExpr :
-    MExpr MULT AExpr { BinOp (Mult, $1, $3) }
+    MExpr MULT AppExpr { BinOp (Mult, $1, $3) }
+  | AppExpr { $1 }
+
+AppExpr :
+    AppExpr AExpr { AppExp ($1, $2) }
   | AExpr { $1 }
 
 AExpr :
@@ -48,16 +69,35 @@ AExpr :
   | FALSE { BLit false }
   | ID { Var $1 }
   | LPAREN Expr RPAREN { $2 }
+  | LPAREN Infix RPAREN { $2 }
 
 IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-  LET Binding IN Expr { LetExp ($2, $4) }
+    LET Binding IN Expr { LetExp ($2, $4) }
+
+FunExpr :
+    FUN ID RARROW Expr { FunExp ($2, $4) }
+  | FUN Arguments RARROW Expr { fold_args $2 $4 }
+  | DFUN ID RARROW Expr { DFunExp ($2, $4) }
+  | DFUN Arguments RARROW Expr { fold_argsd $2 $4 }
+
+Infix :
+    PLUS    { f_plus }
+  | MULT    { f_mult }
+  | LT      { f_lt }
+  | ANDAND  { f_and }
+  | OROR    { f_or }
 
 Binding :
     Equality ANDLIT Binding { $1::$3 }
   | Equality { [$1] }
 
 Equality :
-    ID EQ Expr { ($1, $3) }
+    ID Arguments EQ Expr { ($1, fold_args $2 $4) }
+  | ID EQ Expr { ($1, $3) }
+
+Arguments :
+    ID Arguments { $1::$2 }
+  | ID { [$1] }
