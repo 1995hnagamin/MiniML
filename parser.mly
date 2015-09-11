@@ -2,8 +2,8 @@
 open Syntax
 %}
 %token LPAREN RPAREN SEMISEMI
-%token PLUS MULT LT AND OR
-%token IF THEN ELSE TRUE FALSE
+%token PLUS MULT LT AND OR EQ
+%token IF THEN ELSE LET IN TRUE FALSE
 
 %token <int> INTV
 %token <Syntax.id> ID
@@ -14,9 +14,11 @@ open Syntax
 
 toplevel :
     Expr SEMISEMI { Exp $1 }
+  | LET ID EQ Expr SEMISEMI { LetDecl($2, $4) }
 
 Expr :
     IfExpr { $1 }
+  | LetExpr { $1 }
   | BExpr { $1 }
 
 BExpr :
@@ -46,3 +48,5 @@ AExpr :
 IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
+LetExpr :
+  LET ID EQ Expr IN Expr { LetExp ($2, $4, $6) }
