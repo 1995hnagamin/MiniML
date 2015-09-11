@@ -1,11 +1,16 @@
 %{
 open Syntax
+open Util
 
-let f_plus = FunExp ("x", FunExp ("y", BinOp (Plus, Var "x", Var "y")))
-let f_mult = FunExp ("x", FunExp ("y", BinOp (Mult, Var "x", Var "y")))
-let f_lt   = FunExp ("x", FunExp ("y", BinOp (Lt, Var "x", Var "y")))
-let f_and  = FunExp ("x", FunExp ("y", BinOp (And, Var "x", Var "y")))
-let f_or   = FunExp ("x", FunExp ("y", BinOp (Or, Var "x", Var "y")))
+let f_plus = FunExp ("+l", FunExp ("+r", BinOp (Plus, Var "+l", Var "+r")))
+let f_mult = FunExp ("*l", FunExp ("*r", BinOp (Mult, Var "*l", Var "*r")))
+let f_lt   = FunExp ("<l", FunExp ("<r", BinOp (Lt,   Var "<l", Var "<r")))
+let f_and  = FunExp ("&l", FunExp ("&r", BinOp (And,  Var "&l", Var "&r")))
+let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
+;;
+
+let fold_args args body =
+  fold_right (fun x body -> FunExp (x, body)) body args
 ;;
 %}
 %token LPAREN RPAREN SEMISEMI
@@ -32,7 +37,9 @@ Expr :
 
 LetDecl :
     LET Binding { $2 }
+  | LET FunBinding { $2 }
   | LET Binding LetDecl { List.append $2 $3 }
+  | LET FunBinding LetDecl { List.append $2 $3 }
 
 BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
@@ -67,7 +74,9 @@ IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-  LET Binding IN Expr { LetExp ($2, $4) }
+    LET Binding IN Expr { LetExp ($2, $4) }
+  | LET FunBinding IN Expr { LetExp ($2, $4) }
+
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
@@ -85,3 +94,10 @@ Binding :
 
 Equality :
     ID EQ Expr { ($1, $3) }
+
+FunBinding :
+    ID Arguments EQ Expr { [($1, fold_args $2 $4)] }
+
+Arguments :
+    ID Arguments { $1::$2 }
+  | ID { [$1] }
