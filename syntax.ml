@@ -15,5 +15,5 @@ type exp =
 
 type program = 
     Exp of exp
-  | LetDecl of id * exp
+  | LetDecl of (id * exp) list
 ;;

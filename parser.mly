@@ -14,7 +14,11 @@ open Syntax
 
 toplevel :
     Expr SEMISEMI { Exp $1 }
-  | LET ID EQ Expr SEMISEMI { LetDecl($2, $4) }
+  | LetDecl { LetDecl $1 }
+
+LetDecl :
+    LET ID EQ Expr LetDecl { ($2, $4)::$5 }
+  | LET ID EQ Expr SEMISEMI { [($2, $4)] }
 
 Expr :
     IfExpr { $1 }
@@ -49,4 +53,4 @@ IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-  LET ID EQ Expr IN Expr { LetExp ($2, $4, $6) }
+    LET ID EQ Expr IN Expr { LetExp ($2, $4, $6) }

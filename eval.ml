@@ -1,4 +1,5 @@
 open Syntax
+open Util
 
 type value =
     IntV of int
@@ -52,11 +53,23 @@ let rec eval_exp env = function
       eval_exp (Environment.extend id value env) body
 ;;
 
+let values env pairs =
+  let rec f alist = function
+    [] -> alist
+    | (x,_)::rest ->
+        let v = Environment.lookup x env in
+        f (assoc_set x v alist) rest
+  in
+  f [] pairs
+;;
+
 let eval_decl env = function
     Exp e -> 
       let v = eval_exp env e in 
-      ("-", env, v) 
-  | LetDecl (id, exp) ->
-    let value = eval_exp env exp in
-    (id, Environment.extend id value env, value)
+      ([("-", v)], env) 
+  | LetDecl pairs ->
+      let extend = fun env (id,e) -> 
+        Environment.extend id (eval_exp env e) env in
+      let newenv = fold_left extend env pairs in
+      (values newenv pairs, newenv)
 ;;
