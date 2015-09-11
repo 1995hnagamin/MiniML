@@ -37,9 +37,7 @@ Expr :
 
 LetDecl :
     LET Binding { $2 }
-  | LET FunBinding { $2 }
   | LET Binding LetDecl { List.append $2 $3 }
-  | LET FunBinding LetDecl { List.append $2 $3 }
 
 BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
@@ -75,11 +73,10 @@ IfExpr :
 
 LetExpr :
     LET Binding IN Expr { LetExp ($2, $4) }
-  | LET FunBinding IN Expr { LetExp ($2, $4) }
-
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
+  | FUN Arguments RARROW Expr { fold_args $2 $4 }
 
 Infix :
     PLUS    { f_plus }
@@ -93,10 +90,8 @@ Binding :
   | Equality { [$1] }
 
 Equality :
-    ID EQ Expr { ($1, $3) }
-
-FunBinding :
-    ID Arguments EQ Expr { [($1, fold_args $2 $4)] }
+    ID Arguments EQ Expr { ($1, fold_args $2 $4) }
+  | ID EQ Expr { ($1, $3) }
 
 Arguments :
     ID Arguments { $1::$2 }
