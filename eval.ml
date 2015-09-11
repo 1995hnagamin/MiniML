@@ -17,10 +17,18 @@ let pp_val = function
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
     Plus, IntV i1, IntV i2 -> IntV (i1 + i2)
   | Plus, _, _ -> err ("Both arguments must be integer: +")
+  
   | Mult, IntV i1, IntV i2 -> IntV (i1 * i2)
   | Mult, _, _ -> err ("Both arguments must be integer: *")
+  
   | Lt, IntV i1, IntV i2 -> BoolV (i1 < i2)
   | Lt, _, _ -> err ("Both arguments must be integer: <")
+  
+  | And, BoolV b1, BoolV b2 -> BoolV (b1 && b2)
+  | And, _, _ -> err ("Both arguments must be boolean: &&")
+  
+  | Or, BoolV b1, BoolV b2 -> BoolV (b1 || b2)
+  | Or, _, _ -> err ("Both arguments must be boolean: ||")
 ;;
 
 let rec eval_exp env = function

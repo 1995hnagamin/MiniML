@@ -4,6 +4,6 @@
 *.cmi
 *.cmx
 ocaml
-lexer.mll
+lexer.ml
 parser.mli
 parser.ml
