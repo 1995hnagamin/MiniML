@@ -1,0 +1,9 @@
+*.o
+*.out
+*.cmo
+*.cmi
+*.cmx
+ocaml
+lexer.mll
+parser.mli
+parser.ml
