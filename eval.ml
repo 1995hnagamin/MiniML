@@ -3,17 +3,15 @@ open Syntax
 type value =
     IntV of int
   | BoolV of bool
-  | Error of string
 ;;
 
-let err msg =
-  Error msg
-;;
+exception Error of string
+
+let err msg = raise (Error msg)
 
 let pp_val = function
-    IntV i  -> Printf.printf "int = %d\n"  i
-  | BoolV b -> Printf.printf "bool = %b\n" b
-  | Error e -> Printf.printf "Error: %s\n" e
+    IntV i  -> Printf.printf "int = %d"  i
+  | BoolV b -> Printf.printf "bool = %b" b
 ;;
 
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
@@ -28,7 +26,7 @@ let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
 let rec eval_exp env = function
     Var x ->
       (try Environment.lookup x env with
-        Environment.Not_bound -> err ("Variable not bound: " ^ x))
+        Environment.Not_bound -> err ("Unbound variable " ^ x))
   | ILit i -> IntV i
   | BLit b -> BoolV b
   | BinOp (op, exp1, exp2) ->

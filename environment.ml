@@ -6,7 +6,8 @@ let extend x v env = (x,v)::env
 exception Not_bound
 
 let rec lookup x env =
-  try List.assoc x env with Not_bound -> raise Not_bound 
+  try List.assoc x env with 
+    Not_found -> raise Not_bound 
 ;;
     
 let rec map f = function
