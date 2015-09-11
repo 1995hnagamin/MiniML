@@ -7,6 +7,7 @@ let reservedWords = [
   ("true" , Parser.TRUE) ;
   ("let"  , Parser.LET) ;
   ("in"   , Parser.IN);
+  ("and"  , Parser.AND);
 ] ;;
 }
 

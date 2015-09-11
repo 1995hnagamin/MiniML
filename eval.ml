@@ -48,9 +48,15 @@ let rec eval_exp env = function
         BoolV true  -> eval_exp env exp2
       | BoolV false -> eval_exp env exp3
       | _ -> err ("Test expression must be boolean: if")) 
-  | LetExp (id, exp, body) ->
-      let value = eval_exp env exp in
-      eval_exp (Environment.extend id value env) body
+      | LetExp (bind, body) ->
+          let rec eval env = function
+              [] -> eval_exp env body
+            | (x,e)::rest ->
+                let v = eval_exp env e in
+                let env = Environment.extend x v env in
+                eval env rest      
+          in
+          eval env bind
 ;;
 
 let values env pairs =
