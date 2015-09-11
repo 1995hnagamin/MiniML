@@ -3,7 +3,7 @@
 *.cmo
 *.cmi
 *.cmx
-ocaml
+miniml
 lexer.ml
 parser.mli
 parser.ml
