@@ -5,6 +5,7 @@ type exval =
     IntV of int
   | BoolV of bool
   | ProcV of id * exp * dnval Environment.t
+  | DProcV of id * exp
 and dnval = exval
 ;;
 
@@ -16,6 +17,7 @@ let pp_val = function
     IntV i  -> Printf.printf "int = %d"  i
   | BoolV b -> Printf.printf "bool = %b" b
   | ProcV (id, body, env) -> Printf.printf "fun %s -> ..." id
+  | DProcV (id, body) -> Printf.printf "dfun %s -> ..." id
 ;;
 
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
@@ -61,13 +63,17 @@ let rec eval_exp env = function
       in
       eval env bind
   | FunExp (id, exp) -> ProcV (id, exp, env)
+  | DFunExp (id, exp) -> DProcV (id, exp)
   | AppExp (exp1, exp2) ->
       let funval  = eval_exp env exp1 in
       let arg     = eval_exp env exp2 in
       (match funval with
           ProcV (id, body, env') ->
             let newenv = Environment.extend id arg env' in
-              eval_exp newenv body
+            eval_exp newenv body
+        | DProcV (id, body) ->
+            let newenv = Environment.extend id arg env in
+            eval_exp newenv body
         | _ -> err ("Non-function value is applied"))
 
 ;;

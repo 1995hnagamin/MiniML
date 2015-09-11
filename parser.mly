@@ -11,12 +11,15 @@ let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
 
 let fold_args args body =
   fold_right (fun x body -> FunExp (x, body)) body args
+
+let fold_argsd args body =
+  fold_right (fun x body -> DFunExp (x, body)) body args
 ;;
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
 %token IF THEN ELSE LET IN ANDLIT TRUE FALSE
-%token FUN RARROW
+%token DFUN FUN RARROW
 
 %token <int> INTV
 %token <Syntax.id> ID
@@ -77,6 +80,8 @@ LetExpr :
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
   | FUN Arguments RARROW Expr { fold_args $2 $4 }
+  | DFUN ID RARROW Expr { DFunExp ($2, $4) }
+  | DFUN Arguments RARROW Expr { fold_argsd $2 $4 }
 
 Infix :
     PLUS    { f_plus }
