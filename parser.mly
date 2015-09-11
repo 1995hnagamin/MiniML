@@ -4,6 +4,7 @@ open Syntax
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
 %token IF THEN ELSE LET IN ANDLIT TRUE FALSE
+%token FUN RARROW
 
 %token <int> INTV
 %token <Syntax.id> ID
@@ -20,6 +21,7 @@ Expr :
     IfExpr { $1 }
   | LetExpr { $1 }
   | BExpr { $1 }
+  | FunExpr { $1 }
 
 LetDecl :
     LET Binding { $2 }
@@ -39,7 +41,11 @@ PExpr :
   | MExpr { $1 }
 
 MExpr :
-    MExpr MULT AExpr { BinOp (Mult, $1, $3) }
+    MExpr MULT AppExpr { BinOp (Mult, $1, $3) }
+  | AppExpr { $1 }
+
+AppExpr :
+    AppExpr AExpr { AppExp ($1, $2) }
   | AExpr { $1 }
 
 AExpr :
@@ -54,6 +60,9 @@ IfExpr :
 
 LetExpr :
   LET Binding IN Expr { LetExp ($2, $4) }
+
+FunExpr :
+    FUN ID RARROW Expr { FunExp ($2, $4) }
 
 Binding :
     Equality ANDLIT Binding { $1::$3 }
