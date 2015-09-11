@@ -1,4 +1,5 @@
 open Syntax
+open Util
 
 type value =
     IntV of int
@@ -47,8 +48,34 @@ let rec eval_exp env = function
         BoolV true  -> eval_exp env exp2
       | BoolV false -> eval_exp env exp3
       | _ -> err ("Test expression must be boolean: if")) 
+      | LetExp (bind, body) ->
+          let rec eval env = function
+              [] -> eval_exp env body
+            | (x,e)::rest ->
+                let v = eval_exp env e in
+                let env = Environment.extend x v env in
+                eval env rest      
+          in
+          eval env bind
+;;
+
+let values env pairs =
+  let rec f alist = function
+    [] -> alist
+    | (x,_)::rest ->
+        let v = Environment.lookup x env in
+        f (assoc_set x v alist) rest
+  in
+  f [] pairs
 ;;
 
 let eval_decl env = function
-  Exp e -> let v = eval_exp env e in ("-", env, v) 
+    Exp e -> 
+      let v = eval_exp env e in 
+      ([("-", v)], env) 
+  | LetDecl pairs ->
+      let extend = fun env (id,e) -> 
+        Environment.extend id (eval_exp env e) env in
+      let newenv = fold_left extend env pairs in
+      (values newenv pairs, newenv)
 ;;

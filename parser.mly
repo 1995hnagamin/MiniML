@@ -2,8 +2,8 @@
 open Syntax
 %}
 %token LPAREN RPAREN SEMISEMI
-%token PLUS MULT LT AND OR
-%token IF THEN ELSE TRUE FALSE
+%token PLUS MULT LT ANDAND OROR EQ
+%token IF THEN ELSE LET IN ANDLIT TRUE FALSE
 
 %token <int> INTV
 %token <Syntax.id> ID
@@ -14,14 +14,20 @@ open Syntax
 
 toplevel :
     Expr SEMISEMI { Exp $1 }
+  | LetDecl SEMISEMI { LetDecl $1 }
 
 Expr :
     IfExpr { $1 }
+  | LetExpr { $1 }
   | BExpr { $1 }
 
+LetDecl :
+    LET Binding { $2 }
+  | LET Binding LetDecl { List.append $2 $3 }
+
 BExpr :
-    BExpr AND LTExpr  { BinOp (And, $1, $3) }
-  | BExpr OR LTExpr   { BinOp (Or, $1, $3) }
+    BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
+  | BExpr OROR LTExpr   { BinOp (Or, $1, $3) }
   | LTExpr { $1 }
 
 LTExpr :
@@ -46,3 +52,12 @@ AExpr :
 IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
+LetExpr :
+  LET Binding IN Expr { LetExp ($2, $4) }
+
+Binding :
+    Equality ANDLIT Binding { $1::$3 }
+  | Equality { [$1] }
+
+Equality :
+    ID EQ Expr { ($1, $3) }
