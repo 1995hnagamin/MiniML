@@ -10,7 +10,8 @@ type exp =
   | BLit of bool
   | BinOp of binOp * exp * exp
   | IfExp of exp * exp * exp 
-  | LetExp of (id * exp) list * exp
+  | LetExp of id * exp * exp
+  | LetRecExp of id * id * exp * exp
   | FunExp of id * exp
   | DFunExp of id * exp
   | AppExp of exp * exp
@@ -19,4 +20,5 @@ type exp =
 type program = 
     Exp of exp
   | LetDecl of (id * exp) list
+  | LetRecDecl of id * id * exp
 ;;
