@@ -19,3 +19,13 @@ let rec assoc_set key value = function
       if k = key
       then (k,value)::rest
       else (k,v)::(assoc_set key value rest)
+
+let rec try_assoc key default alist =
+  try List.assoc key alist with
+  Not_found -> default
+;;
+
+let rec filter p = function
+    [] -> []
+  | x::xs -> if p x then x::(filter p xs) else filter p xs
+;;

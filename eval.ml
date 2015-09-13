@@ -16,8 +16,8 @@ let err msg = raise (Error msg)
 let pp_val = function
     IntV i  -> Printf.printf "%d"  i
   | BoolV b -> Printf.printf "%b" b
-  | ProcV (id, body, env) -> Printf.printf "fun %s -> ..." id
-  | DProcV (id, body) -> Printf.printf "dfun %s -> ..." id
+  | ProcV (id, body, env) -> print_string "<fun>"
+  | DProcV (id, body) -> print_string "<dfun>"
 ;;
 
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
