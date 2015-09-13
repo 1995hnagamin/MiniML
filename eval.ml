@@ -14,8 +14,8 @@ exception Error of string
 let err msg = raise (Error msg)
 
 let pp_val = function
-    IntV i  -> Printf.printf "int = %d"  i
-  | BoolV b -> Printf.printf "bool = %b" b
+    IntV i  -> Printf.printf "%d"  i
+  | BoolV b -> Printf.printf "%b" b
   | ProcV (id, body, env) -> Printf.printf "fun %s -> ..." id
   | DProcV (id, body) -> Printf.printf "dfun %s -> ..." id
 ;;

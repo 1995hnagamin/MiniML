@@ -22,3 +22,14 @@ type program =
   | LetDecl of (id * exp) list
   | LetRecDecl of id * id * exp
 ;;
+
+type ty = 
+    TyInt 
+  | TyBool
+;;
+
+let pp_ty = function
+    TyInt   -> print_string "int"
+  | TyBool  -> print_string "bool"
+;;
+
