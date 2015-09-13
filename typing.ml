@@ -1,4 +1,5 @@
 open Syntax
+open Util
 
 exception Error of string
 
@@ -50,7 +51,19 @@ let rec ty_exp tyenv = function
   | _ -> err "Not implemented"
 ;;
 
+let ty_letdecl tyenv (id, exp) =
+  let ty = ty_exp tyenv exp in
+  let tyenv' = Environment.extend id ty tyenv in
+  tyenv'
+;;
+
+let ty_letdecls tyenv binds =
+  let tyenv' = fold_left ty_letdecl tyenv binds in
+  Environment.resolve tyenv' binds
+;;
+
 let ty_decls tyenv = function
     Exp e -> [("-", ty_exp tyenv e)]
+  | LetDecl binds -> ty_letdecls tyenv binds
   | _ -> err "Not implemented"
 ;;

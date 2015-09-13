@@ -79,16 +79,6 @@ let rec eval_exp env = function
 
 ;;
 
-let values env pairs =
-  let rec f alist = function
-    [] -> alist
-    | (x,_)::rest ->
-        let v = Environment.lookup x env in
-        f (assoc_set x v alist) rest
-  in
-  f [] pairs
-;;
-
 let eval_decl env = function
     Exp e -> 
       let v = eval_exp env e in 
@@ -97,7 +87,7 @@ let eval_decl env = function
       let extend = fun env (id,e) -> 
         Environment.extend id (eval_exp env e) env in
       let newenv = fold_left extend env pairs in
-      (values newenv pairs, newenv)
+      (Environment.resolve newenv pairs, newenv)
   | LetRecDecl (id, para, body) ->
       let dummyenv = ref Environment.empty in
       let proc = ProcV (para, body, dummyenv) in
