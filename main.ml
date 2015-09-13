@@ -1,5 +1,6 @@
 open Syntax
 open Eval
+open Util
 
 let rec print_decl tyenv = function
     [] -> ();
@@ -20,7 +21,7 @@ let eval env tyenv program =
 ;;
 
 let eval_print env tyenv program =
-  let (tydecls, decls, newenv) = 
+  let (tydecls, decls, env') = 
     try eval env tyenv program with
       Eval.Error msg -> 
         Printf.printf "Error: %s\n" msg; 
@@ -35,8 +36,10 @@ let eval_print env tyenv program =
         Printf.printf "Error: %s\n" msg;
         (tyenv, [], env)
   in
+  let tyenv' = fold_left 
+    (fun env (x,t) -> Environment.extend x t env) tyenv tydecls in
   print_decl tydecls decls;
-  newenv
+  (env', tyenv')
 ;;
 
 let read_eval_print env tyenv =
@@ -46,8 +49,8 @@ let read_eval_print env tyenv =
 ;;
 
 let rec read_eval_print_loop env tyenv =
-  let newenv = read_eval_print env tyenv in
-  read_eval_print_loop newenv tyenv
+  let (env', tyenv') = read_eval_print env tyenv in
+  read_eval_print_loop env' tyenv'
 ;;
 
 let exec_file filename tyenv =
