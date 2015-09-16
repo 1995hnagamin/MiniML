@@ -124,10 +124,16 @@ let ty_letdecls tyenv binds =
   Environment.resolve tyenv' binds
 ;;
 
+let ty_letrecdecl tyenv id para exp =
+  let lrexp = LetRecExp (id, para, exp, Var id) in
+  let (_, ty) = ty_exp tyenv lrexp in
+  [(id, ty)]
+;;
+
 let ty_decls tyenv = function
     Exp e -> 
       let (_, ty) = ty_exp tyenv e in
       [("-", ty)]
   | LetDecl binds -> ty_letdecls tyenv binds
-  | _ -> err "Not implemented"
+  | LetRecDecl (id, para, exp) -> ty_letrecdecl tyenv id para exp
 ;;
