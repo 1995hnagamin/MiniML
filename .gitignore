@@ -13,3 +13,5 @@ parser.output
 !.gitignore
 
 OCamlMakefile
+
+*.omc
