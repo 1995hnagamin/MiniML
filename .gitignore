@@ -3,10 +3,6 @@
 *.cmo
 *.cmi
 *.cmx
-lexer.ml
-parser.mli
-parser.ml
-parser.output
 
 .*
 !.gitignore
