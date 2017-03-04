@@ -15,3 +15,10 @@ OCamlProgram($(PROGRAM), $(FILES))
 
 .DEFAULT: \
 	$(if $(NATIVE_ENABLED), $(PROGRAM).opt)
+
+.PHONY: clean
+
+clean:
+  rm -f \
+     $(filter-proper-targets $(glob $(addsuffix .*, $(FILES)))) \
+     $(PROGRAM).opt
