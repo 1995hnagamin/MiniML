@@ -13,7 +13,6 @@ type exp =
   | LetExp of id * exp * exp
   | LetRecExp of id * id * exp * exp
   | FunExp of id * exp
-  | DFunExp of id * exp
   | AppExp of exp * exp
 ;;
 
