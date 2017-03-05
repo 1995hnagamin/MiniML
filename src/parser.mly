@@ -40,6 +40,7 @@ Expr :
   | LetExpr { $1 }
   | LetRecExpr { $1 }
   | BExpr { $1 }
+  | UExpr { $1 }
   | FunExpr { $1 }
 
 LetDecl :
@@ -55,6 +56,9 @@ BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
   | BExpr OROR LTExpr   { BinOp (Or, $1, $3) }
   | LTExpr { $1 }
+
+UExpr :
+    MINUS LTExpr { UniOp (Negate, $2) }
 
 LTExpr :
     PExpr LT PExpr { BinOp (Lt, $1, $3) }
