@@ -23,5 +23,4 @@ let resolve env pairs =
         f (assoc_set x v alist) rest
   in
   f [] pairs
-;;
 

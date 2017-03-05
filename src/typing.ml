@@ -21,12 +21,10 @@ let subst_type s t =
         if x = source then target else (TyVar x)
   in
   fold_left subst_ty t s
-;;
 
 let map_subst x a =
   let s = [(x, a)] in
   map (fun (t, u) -> (subst_type s t, subst_type s u))
-;;
 
 let rec unify = function
     [] -> []
@@ -44,7 +42,6 @@ let rec unify = function
         then unify rest
       else
         err "error"
-;;
 
 let ty_prim op ty1 ty2 = match op with
     Plus -> ([(ty1, TyInt); (ty2, TyInt)], TyInt)
@@ -53,7 +50,6 @@ let ty_prim op ty1 ty2 = match op with
   | Lt   -> ([(ty1, TyInt); (ty2, TyInt)], TyBool)
   | And  -> ([(ty1, TyBool); (ty2, TyBool)], TyBool)
   | Or   -> ([(ty1, TyBool); (ty2, TyBool)], TyBool)
-;;
 
 let ty_prim_unary op ty = match op with
     Negate -> ([ty, TyInt], TyInt)
@@ -121,24 +117,20 @@ let rec ty_exp tyenv = function
       let (eqs3, ty) = ([(ranty, ty1)], ty2) in
       let s = unify ((eqs_of_subst s1) @ (eqs_of_subst s2) @ eqs3) in
       (s, subst_type s ty)
-;;
 
 let ty_letdecl tyenv (id, exp) =
   let (_, ty) = ty_exp tyenv exp in
   let tyenv' = Environment.extend id ty tyenv in
   tyenv'
-;;
 
 let ty_letdecls tyenv binds =
   let tyenv' = fold_left ty_letdecl tyenv binds in
   Environment.resolve tyenv' binds
-;;
 
 let ty_letrecdecl tyenv id para exp =
   let lrexp = LetRecExp (id, para, exp, Var id) in
   let (_, ty) = ty_exp tyenv lrexp in
   [(id, ty)]
-;;
 
 let ty_decls tyenv = function
     Exp e ->
@@ -146,4 +138,3 @@ let ty_decls tyenv = function
       [("-", ty)]
   | LetDecl binds -> ty_letdecls tyenv binds
   | LetRecDecl (id, para, exp) -> ty_letrecdecl tyenv id para exp
-;;

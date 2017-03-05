@@ -17,7 +17,6 @@ let eval env tyenv program =
   let tydecls = Typing.ty_decls tyenv decl in
   let (decls, newenv) = eval_decl env decl in
   (tydecls, decls, newenv)
-;;
 
 let eval_print env tyenv program =
   let (tydecls, decls, env') =
@@ -39,7 +38,6 @@ let eval_print env tyenv program =
     (fun env (x,t) -> Environment.extend x t env) tyenv tydecls in
   print_decl tydecls decls;
   (env', tyenv')
-;;
 
 let read_eval_print env tyenv =
   print_string "# ";
@@ -77,7 +75,6 @@ let tyroman = [
     ("v",  TyInt);
     ("x",  TyInt);
     ]
-;;
 
 let initial_tyenv = make_env tyroman
 

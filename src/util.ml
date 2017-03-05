@@ -20,9 +20,7 @@ let rec assoc_set key value = function
 let rec try_assoc key default alist =
   try List.assoc key alist with
   Not_found -> default
-;;
 
 let rec filter p = function
     [] -> []
   | x::xs -> if p x then x::(filter p xs) else filter p xs
-;;

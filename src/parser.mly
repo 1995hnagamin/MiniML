@@ -10,7 +10,6 @@ let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
 
 let fold_args args body =
   fold_right (fun x body -> FunExp (x, body)) body args
-;;
 
 let fold_let bind body =
   fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
