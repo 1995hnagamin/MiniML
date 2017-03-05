@@ -47,7 +47,9 @@ LetDecl :
   | LET Binding LetDecl { List.append $2 $3 }
 
 LetRecDecl :
-    LET REC ID ID EQ Expr { LetRecDecl ($3, $4, $6) }
+    LET REC ID EQ FUN ID RARROW Expr {
+      LetRecDecl ($3, $6, $8)
+    }
 
 BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
