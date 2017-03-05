@@ -37,6 +37,10 @@ let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
   | Or, BoolV b1, BoolV b2 -> BoolV (b1 || b2)
   | Or, _, _ -> err ("Both arguments must be boolean: ||")
 
+let rec apply_prim_unary op arg = match op, arg with
+    Negate, IntV i -> IntV (-i)
+  | Negate, _ -> err ("The argument must be integer: - (unary)")
+
 let rec eval_exp env = function
     Var x ->
       (try Environment.lookup x env with
