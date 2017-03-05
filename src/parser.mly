@@ -87,7 +87,9 @@ LetExpr :
   LET Binding IN Expr { fold_let $2 $4 }
 
 LetRecExpr :
-    LET REC ID ID EQ Expr IN Expr { LetRecExp ($3, $4, $6, $8) }
+    LET REC ID EQ FUN ID RARROW Expr IN Expr {
+      LetRecExp ($3, $6, $8, $10)
+    }
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
