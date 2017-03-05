@@ -16,15 +16,15 @@ let eval env program =
 ;;
 
 let eval_print env program =
-  let (decls, newenv) = 
+  let (decls, newenv) =
     try eval env program with
-      Eval.Error msg -> 
-        Printf.printf "Error: %s\n" msg; 
+      Eval.Error msg ->
+        Printf.printf "Error: %s\n" msg;
         ([], env)
-    | Parsing.Parse_error -> 
-        print_string "Error: Parse Error\n"; 
+    | Parsing.Parse_error ->
+        print_string "Error: Parse Error\n";
         ([], env)
-    | Failure msg -> 
+    | Failure msg ->
         Printf.printf "Error: %s\n" msg;
         ([], env)
   in
