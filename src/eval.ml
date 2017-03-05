@@ -7,7 +7,6 @@ type exval =
   | ProcV of id * exp * dnval Environment.t
   | DProcV of id * exp
 and dnval = exval
-;;
 
 exception Error of string
 
@@ -18,7 +17,6 @@ let pp_val = function
   | BoolV b -> Printf.printf "bool = %b" b
   | ProcV (id, body, env) -> Printf.printf "fun %s -> ..." id
   | DProcV (id, body) -> Printf.printf "dfun %s -> ..." id
-;;
 
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
     Plus, IntV i1, IntV i2 -> IntV (i1 + i2)
@@ -35,7 +33,6 @@ let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
 
   | Or, BoolV b1, BoolV b2 -> BoolV (b1 || b2)
   | Or, _, _ -> err ("Both arguments must be boolean: ||")
-;;
 
 let rec eval_exp env = function
     Var x ->
@@ -76,8 +73,6 @@ let rec eval_exp env = function
             eval_exp newenv body
         | _ -> err ("Non-function value is applied"))
 
-;;
-
 let values env pairs =
   let rec f alist = function
     [] -> alist
@@ -86,7 +81,6 @@ let values env pairs =
         f (assoc_set x v alist) rest
   in
   f [] pairs
-;;
 
 let eval_decl env = function
     Exp e ->
@@ -97,4 +91,3 @@ let eval_decl env = function
         Environment.extend id (eval_exp env e) env in
       let newenv = fold_left extend env pairs in
       (values newenv pairs, newenv)
-;;
