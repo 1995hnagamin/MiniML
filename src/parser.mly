@@ -19,7 +19,7 @@ let fold_let bind body =
   fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
 %}
 %token LPAREN RPAREN SEMISEMI
-%token PLUS MULT LT ANDAND OROR EQ
+%token PLUS MINUS MULT LT ANDAND OROR EQ
 %token IF THEN ELSE LET REC IN ANDLIT TRUE FALSE
 %token DFUN FUN RARROW
 
@@ -40,6 +40,7 @@ Expr :
   | LetExpr { $1 }
   | LetRecExpr { $1 }
   | BExpr { $1 }
+  | UExpr { $1 }
   | FunExpr { $1 }
 
 LetDecl :
@@ -56,12 +57,16 @@ BExpr :
   | BExpr OROR LTExpr   { BinOp (Or, $1, $3) }
   | LTExpr { $1 }
 
+UExpr :
+    MINUS LTExpr { UniOp (Negate, $2) }
+
 LTExpr :
     PExpr LT PExpr { BinOp (Lt, $1, $3) }
   | PExpr { $1 }
 
 PExpr :
     PExpr PLUS MExpr { BinOp (Plus, $1, $3) }
+  | PExpr MINUS MExpr { BinOp (Minus, $1, $3) }
   | MExpr { $1 }
 
 MExpr :
