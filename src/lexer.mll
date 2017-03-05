@@ -11,7 +11,7 @@ let reservedWords = [
   ("and"  , Parser.ANDLIT);
   ("fun"  , Parser.FUN);
   ("dfun" , Parser.DFUN);
-] ;;
+]
 }
 
 rule main = parse

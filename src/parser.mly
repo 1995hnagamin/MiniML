@@ -7,7 +7,6 @@ let f_mult = FunExp ("*l", FunExp ("*r", BinOp (Mult, Var "*l", Var "*r")))
 let f_lt   = FunExp ("<l", FunExp ("<r", BinOp (Lt,   Var "<l", Var "<r")))
 let f_and  = FunExp ("&l", FunExp ("&r", BinOp (And,  Var "&l", Var "&r")))
 let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
-;;
 
 let fold_args args body =
   fold_right (fun x body -> FunExp (x, body)) body args
@@ -15,11 +14,9 @@ let fold_args args body =
 
 let fold_argsd args body =
   fold_right (fun x body -> DFunExp (x, body)) body args
-;;
 
 let fold_let bind body =
   fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
-;;
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
