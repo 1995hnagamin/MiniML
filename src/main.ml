@@ -11,7 +11,6 @@ let rec print_decl tyenv = function
       pp_val v;
       print_newline();
       print_decl tyenv rest
-;;
 
 let eval env tyenv program =
   let decl = Parser.toplevel Lexer.main program in
@@ -21,18 +20,18 @@ let eval env tyenv program =
 ;;
 
 let eval_print env tyenv program =
-  let (tydecls, decls, env') = 
+  let (tydecls, decls, env') =
     try eval env tyenv program with
-      Eval.Error msg -> 
-        Printf.printf "Error: %s\n" msg; 
+      Eval.Error msg ->
+        Printf.printf "Error: %s\n" msg;
         (tyenv, [], env)
     | Typing.Error msg ->
         Printf.printf "Type Error : %s\n" msg;
         (tyenv, [], env)
-    | Parsing.Parse_error -> 
-        print_string "Error: Parse Error\n"; 
+    | Parsing.Parse_error ->
+        print_string "Error: Parse Error\n";
         (tyenv, [], env)
-    | Failure msg -> 
+    | Failure msg ->
         Printf.printf "Error: %s\n" msg;
         (tyenv, [], env)
   in
@@ -46,22 +45,18 @@ let read_eval_print env tyenv =
   print_string "# ";
   flush stdout;
   eval_print env tyenv (Lexing.from_channel stdin)
-;;
 
 let rec read_eval_print_loop env tyenv =
   let (env', tyenv') = read_eval_print env tyenv in
   read_eval_print_loop env' tyenv'
-;;
 
 let exec_file filename tyenv =
   let ic = open_in filename in
   eval_print Environment.empty tyenv (Lexing.from_channel ic)
-;;
 
 let rec make_env = function
     [] -> Environment.empty
   | (id, v)::rest -> Environment.extend id v (make_env rest)
-;;
 
 let roman = [
     ("i",   IntV 1);
@@ -71,7 +66,6 @@ let roman = [
     ("v",   IntV 5);
     ("x",   IntV 10);
     ]
-;;
 
 let initial_env = make_env roman
 
@@ -91,4 +85,3 @@ let _ =
   if Array.length Sys.argv >= 2
   then exec_file Sys.argv.(1)
   else read_eval_print_loop initial_env initial_tyenv
-;;

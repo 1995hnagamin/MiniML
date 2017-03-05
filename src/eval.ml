@@ -6,7 +6,6 @@ type exval =
   | BoolV of bool
   | ProcV of id * exp * dnval Environment.t ref
 and dnval = exval
-;;
 
 exception Error of string
 
@@ -16,24 +15,22 @@ let pp_val = function
     IntV i  -> Printf.printf "%d"  i
   | BoolV b -> Printf.printf "%b" b
   | ProcV (id, body, env) -> print_string "<fun>"
-;;
 
 let rec apply_prim op arg1 arg2 = match op, arg1, arg2 with
     Plus, IntV i1, IntV i2 -> IntV (i1 + i2)
   | Plus, _, _ -> err ("Both arguments must be integer: +")
-  
+
   | Mult, IntV i1, IntV i2 -> IntV (i1 * i2)
   | Mult, _, _ -> err ("Both arguments must be integer: *")
-  
+
   | Lt, IntV i1, IntV i2 -> BoolV (i1 < i2)
   | Lt, _, _ -> err ("Both arguments must be integer: <")
-  
+
   | And, BoolV b1, BoolV b2 -> BoolV (b1 && b2)
   | And, _, _ -> err ("Both arguments must be boolean: &&")
-  
+
   | Or, BoolV b1, BoolV b2 -> BoolV (b1 || b2)
   | Or, _, _ -> err ("Both arguments must be boolean: ||")
-;;
 
 let rec eval_exp env = function
     Var x ->
@@ -71,14 +68,12 @@ let rec eval_exp env = function
             eval_exp newenv body
         | _ -> err ("Non-function value is applied"))
 
-;;
-
 let eval_decl env = function
-    Exp e -> 
-      let v = eval_exp env e in 
-      ([("-", v)], env) 
+    Exp e ->
+      let v = eval_exp env e in
+      ([("-", v)], env)
   | LetDecl pairs ->
-      let extend = fun env (id,e) -> 
+      let extend = fun env (id,e) ->
         Environment.extend id (eval_exp env e) env in
       let newenv = fold_left extend env pairs in
       (Environment.resolve newenv pairs, newenv)
@@ -88,4 +83,3 @@ let eval_decl env = function
       let newenv = Environment.extend id proc env in
       dummyenv := newenv;
       ([(id, proc)], newenv)
-;;

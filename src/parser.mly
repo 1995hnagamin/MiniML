@@ -7,7 +7,6 @@ let f_mult = FunExp ("*l", FunExp ("*r", BinOp (Mult, Var "*l", Var "*r")))
 let f_lt   = FunExp ("<l", FunExp ("<r", BinOp (Lt,   Var "<l", Var "<r")))
 let f_and  = FunExp ("&l", FunExp ("&r", BinOp (And,  Var "&l", Var "&r")))
 let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
-;;
 
 let fold_args args body =
   fold_right (fun x body -> FunExp (x, body)) body args
@@ -15,7 +14,6 @@ let fold_args args body =
 
 let fold_let bind body =
   fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
-;;
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
@@ -46,7 +44,9 @@ LetDecl :
   | LET Binding LetDecl { List.append $2 $3 }
 
 LetRecDecl :
-    LET REC ID ID EQ Expr { LetRecDecl ($3, $4, $6) }
+    LET REC ID EQ FUN ID RARROW Expr {
+      LetRecDecl ($3, $6, $8)
+    }
 
 BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
@@ -84,7 +84,9 @@ LetExpr :
   LET Binding IN Expr { fold_let $2 $4 }
 
 LetRecExpr :
-    LET REC ID ID EQ Expr IN Expr { LetRecExp ($3, $4, $6, $8) }
+    LET REC ID EQ FUN ID RARROW Expr IN Expr {
+      LetRecExp ($3, $6, $8, $10)
+    }
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }
