@@ -11,7 +11,7 @@ let rec elem y = function
   | x::xs -> x = y || elem y xs
 ;;
 
-let unite xs ys = 
+let unite xs ys =
   fold_left (fun ys x -> if elem x ys then ys else x::ys) ys xs
 ;;
 

@@ -14,7 +14,7 @@ let rec print_decl tyenv = function
 
 let eval env tyenv program =
   let decl = Parser.toplevel Lexer.main program in
-  let tydecls = Typing.ty_decls tyenv decl in 
+  let tydecls = Typing.ty_decls tyenv decl in
   let (decls, newenv) = eval_decl env decl in
   (tydecls, decls, newenv)
 ;;
@@ -35,7 +35,7 @@ let eval_print env tyenv program =
         Printf.printf "Error: %s\n" msg;
         (tyenv, [], env)
   in
-  let tyenv' = fold_left 
+  let tyenv' = fold_left
     (fun env (x,t) -> Environment.extend x t env) tyenv tydecls in
   print_decl tydecls decls;
   (env', tyenv')

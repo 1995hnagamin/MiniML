@@ -25,8 +25,8 @@ type program =
 
 type tyvar = int
 
-type ty = 
-    TyInt 
+type ty =
+    TyInt
   | TyBool
   | TyFun of ty * ty
   | TyVar of tyvar
@@ -36,7 +36,7 @@ let rec string_of_ty = function
     TyInt   -> "int"
   | TyBool  -> "bool"
   | TyVar x -> "t" ^ string_of_int x
-  | TyFun (a, b) -> "(" ^ string_of_ty a ^ "->" ^ string_of_ty b ^ ")" 
+  | TyFun (a, b) -> "(" ^ string_of_ty a ^ "->" ^ string_of_ty b ^ ")"
 ;;
 
 let pp_ty ty = print_string (string_of_ty ty)

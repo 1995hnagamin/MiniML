@@ -15,9 +15,9 @@ let subst_type s t =
   let rec subst_ty t (source, target) = match t with
       TyInt -> TyInt
     | TyBool -> TyBool
-    | TyFun (a, b) -> 
+    | TyFun (a, b) ->
         TyFun (subst_ty a (source, target), subst_ty b (source, target))
-    | TyVar x -> 
+    | TyVar x ->
         if x = source then target else (TyVar x)
   in
   fold_left subst_ty t s
@@ -32,11 +32,11 @@ let rec unify = function
     [] -> []
   | (TyFun (a, b), TyFun (a', b'))::rest -> unify ((a, a')::(b, b')::rest)
   | (TyVar x, a)::rest ->
-      if a = TyVar x 
+      if a = TyVar x
         then unify rest
-      else if MySet.elem x (freevar_ty a) 
+      else if MySet.elem x (freevar_ty a)
         then err "error"
-      else 
+      else
         (x, a)::(unify (map_subst x a rest))
   | (a, TyVar x)::rest -> unify ((TyVar x, a)::rest)
   | (a, b)::rest ->
@@ -60,7 +60,7 @@ let ty_prim_unary op ty = match op with
 
 let ty_if ty1 ty2 ty3 = ([(ty1, TyBool); (ty2, ty3)], ty2)
 
-let ty_app ty1 ty2 = 
+let ty_app ty1 ty2 =
   match ty1 with
     TyFun (a, b) -> ([(a, ty2)], b)
   | TyVar x ->
@@ -141,7 +141,7 @@ let ty_letrecdecl tyenv id para exp =
 ;;
 
 let ty_decls tyenv = function
-    Exp e -> 
+    Exp e ->
       let (_, ty) = ty_exp tyenv e in
       [("-", ty)]
   | LetDecl binds -> ty_letdecls tyenv binds
