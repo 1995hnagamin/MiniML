@@ -83,5 +83,5 @@ let initial_tyenv = make_env tyroman
 
 let _ =
   if Array.length Sys.argv >= 2
-  then exec_file Sys.argv.(1)
+  then exec_file Sys.argv.(1) initial_tyenv
   else read_eval_print_loop initial_env initial_tyenv
