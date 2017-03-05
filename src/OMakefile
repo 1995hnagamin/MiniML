@@ -4,8 +4,10 @@ FILES[] =
 	environment
 	eval
 	lexer
+	mySet
 	parser
 	syntax
+	typing
 	util
 	main
 
