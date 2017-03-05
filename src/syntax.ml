@@ -11,6 +11,7 @@ type exp =
   | ILit of int
   | BLit of bool
   | BinOp of binOp * exp * exp
+  | UniOp of uniOp * exp
   | IfExp of exp * exp * exp
   | LetExp of id * exp * exp
   | LetRecExp of id * id * exp * exp

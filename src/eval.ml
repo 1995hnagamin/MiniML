@@ -51,6 +51,9 @@ let rec eval_exp env = function
       let arg1 = eval_exp env exp1 in
       let arg2 = eval_exp env exp2 in
       apply_prim op arg1 arg2
+  | UniOp (op, exp) ->
+      let arg = eval_exp env exp in
+      apply_prim_unary op arg
   | IfExp (exp1, exp2, exp3) ->
       let test = eval_exp env exp1 in
       (match test with
