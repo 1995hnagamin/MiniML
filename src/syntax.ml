@@ -4,6 +4,8 @@ type id = string
 
 type binOp = Plus | Minus | Mult | Lt | And | Or
 
+type uniOp = Negate
+
 type exp =
     Var of id
   | ILit of int
