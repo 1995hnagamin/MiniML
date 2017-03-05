@@ -3,13 +3,10 @@
 *.cmo
 *.cmi
 *.cmx
-miniml
-lexer.ml
-parser.mli
-parser.ml
-parser.output
 
 .*
 !.gitignore
 
 OCamlMakefile
+
+*.omc
