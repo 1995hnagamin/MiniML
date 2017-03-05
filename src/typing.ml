@@ -55,6 +55,9 @@ let ty_prim op ty1 ty2 = match op with
   | Or   -> ([(ty1, TyBool); (ty2, TyBool)], TyBool)
 ;;
 
+let ty_prim_unary op ty = match op with
+    Negate -> ([ty, TyInt], TyInt)
+
 let ty_if ty1 ty2 ty3 = ([(ty1, TyBool); (ty2, ty3)], ty2)
 
 let ty_app ty1 ty2 = 
@@ -79,6 +82,12 @@ let rec ty_exp tyenv = function
       let eqs = (eqs_of_subst s1) @ (eqs_of_subst s2) @ eqs3 in
       let s3 = unify eqs in
       (s3, subst_type s3 ty)
+  | UniOp (op, exp) ->
+      let (s, ty) = ty_exp tyenv exp in
+      let (eqs, ty) = ty_prim_unary op ty in
+      let eqs = (eqs_of_subst s) @ eqs in
+      let s = unify eqs in
+      (s, subst_type s ty)
   | IfExp (exp1, exp2, exp3) ->
       let (s1, ty1) = ty_exp tyenv exp1 in
       let (s2, ty2) = ty_exp tyenv exp2 in
