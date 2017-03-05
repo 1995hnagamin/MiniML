@@ -1,9 +1,3 @@
-let makefact = 
-  fun maker -> 
-    fun x ->
-      if x < 1
-      then 1
-      else x * maker maker (x + -1) in
-let fact x = makefact makefact x in
-  fact 10
-;;
+let rec fact n = if n < 1 then 1 else n * fact (n + -1) 
+in fact 10;;
+

@@ -4,7 +4,7 @@ open Util
 type exval =
     IntV of int
   | BoolV of bool
-  | ProcV of id * exp * dnval Environment.t
+  | ProcV of id * exp * dnval Environment.t ref
   | DProcV of id * exp
 and dnval = exval
 
@@ -50,23 +50,24 @@ let rec eval_exp env = function
         BoolV true  -> eval_exp env exp2
       | BoolV false -> eval_exp env exp3
       | _ -> err ("Test expression must be boolean: if"))
-  | LetExp (bind, body) ->
-      let rec eval env = function
-          [] -> eval_exp env body
-        | (x,e)::rest ->
-            let v = eval_exp env e in
-            let env = Environment.extend x v env in
-            eval env rest
-      in
-      eval env bind
-  | FunExp (id, exp) -> ProcV (id, exp, env)
+  | LetExp (x, exp, body) ->
+      let v = eval_exp env exp in
+      let newenv = Environment.extend x v env in
+      eval_exp newenv body
+  | LetRecExp (id, para, exp1, exp2) ->
+      let dummyenv = ref Environment.empty in
+      let proc = ProcV (para, exp1, dummyenv) in
+      let newenv = Environment.extend id proc env in
+      dummyenv := newenv;
+      eval_exp newenv exp2
+  | FunExp (id, exp) -> ProcV (id, exp, ref env)
   | DFunExp (id, exp) -> DProcV (id, exp)
   | AppExp (exp1, exp2) ->
       let funval  = eval_exp env exp1 in
       let arg     = eval_exp env exp2 in
       (match funval with
           ProcV (id, body, env') ->
-            let newenv = Environment.extend id arg env' in
+            let newenv = Environment.extend id arg !env' in
             eval_exp newenv body
         | DProcV (id, body) ->
             let newenv = Environment.extend id arg env in
@@ -91,3 +92,9 @@ let eval_decl env = function
         Environment.extend id (eval_exp env e) env in
       let newenv = fold_left extend env pairs in
       (values newenv pairs, newenv)
+  | LetRecDecl (id, para, body) ->
+      let dummyenv = ref Environment.empty in
+      let proc = ProcV (para, body, dummyenv) in
+      let newenv = Environment.extend id proc env in
+      dummyenv := newenv;
+      ([(id, proc)], newenv)

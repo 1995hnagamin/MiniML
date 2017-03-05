@@ -10,13 +10,17 @@ let f_or   = FunExp ("|l", FunExp ("|r", BinOp (Or,   Var "|l", Var "|r")))
 
 let fold_args args body =
   fold_right (fun x body -> FunExp (x, body)) body args
+;;
 
 let fold_argsd args body =
   fold_right (fun x body -> DFunExp (x, body)) body args
+
+let fold_let bind body =
+  fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MULT LT ANDAND OROR EQ
-%token IF THEN ELSE LET IN ANDLIT TRUE FALSE
+%token IF THEN ELSE LET REC IN ANDLIT TRUE FALSE
 %token DFUN FUN RARROW
 
 %token <int> INTV
@@ -29,16 +33,23 @@ let fold_argsd args body =
 toplevel :
     Expr SEMISEMI { Exp $1 }
   | LetDecl SEMISEMI { LetDecl $1 }
+  | LetRecDecl SEMISEMI { $1 }
 
 Expr :
     IfExpr { $1 }
   | LetExpr { $1 }
+  | LetRecExpr { $1 }
   | BExpr { $1 }
   | FunExpr { $1 }
 
 LetDecl :
     LET Binding { $2 }
   | LET Binding LetDecl { List.append $2 $3 }
+
+LetRecDecl :
+    LET REC ID EQ FUN ID RARROW Expr {
+      LetRecDecl ($3, $6, $8)
+    }
 
 BExpr :
     BExpr ANDAND LTExpr  { BinOp (And, $1, $3) }
@@ -73,7 +84,12 @@ IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-    LET Binding IN Expr { LetExp ($2, $4) }
+  LET Binding IN Expr { fold_let $2 $4 }
+
+LetRecExpr :
+    LET REC ID EQ FUN ID RARROW Expr IN Expr {
+      LetRecExp ($3, $6, $8, $10)
+    }
 
 FunExpr :
     FUN ID RARROW Expr { FunExp ($2, $4) }

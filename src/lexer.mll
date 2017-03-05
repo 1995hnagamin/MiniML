@@ -6,6 +6,7 @@ let reservedWords = [
   ("then" , Parser.THEN) ;
   ("true" , Parser.TRUE) ;
   ("let"  , Parser.LET) ;
+  ("rec"  , Parser.REC) ;
   ("in"   , Parser.IN);
   ("and"  , Parser.ANDLIT);
   ("fun"  , Parser.FUN);
