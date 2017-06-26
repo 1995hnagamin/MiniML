@@ -26,22 +26,23 @@ let map_subst x a =
   let s = [(x, a)] in
   map (fun (t, u) -> (subst_type s t, subst_type s u))
 
-let rec unify = function
-    [] -> []
-  | (TyFun (a, b), TyFun (a', b'))::rest -> unify ((a, a')::(b, b')::rest)
-  | (TyVar x, a)::rest ->
-      if a = TyVar x
-        then unify rest
-      else if MySet.elem x (freevar_ty a)
+let rec unify : (ty * ty) list -> subst = function
+  [] -> []
+    | (p, q)::rest -> match (p, q) with
+      (TyFun (a, b), TyFun (a', b')) -> unify ((a, a')::(b, b')::rest)
+    | (TyVar x, a) ->
+        if a = TyVar x
+          then unify rest
+        else if MySet.elem x (freevar_ty a)
         then err "error"
-      else
-        (x, a)::(unify (map_subst x a rest))
-  | (a, TyVar x)::rest -> unify ((TyVar x, a)::rest)
-  | (a, b)::rest ->
-      if a = b
-        then unify rest
-      else
-        err "error"
+        else
+          (x, a)::(unify (map_subst x a rest))
+    | (a, TyVar x) -> unify ((TyVar x, a)::rest)
+    | _ ->
+        if p = q
+          then unify rest
+        else
+          err "error"
 
 let ty_prim op ty1 ty2 = match op with
     Plus -> ([(ty1, TyInt); (ty2, TyInt)], TyInt)
