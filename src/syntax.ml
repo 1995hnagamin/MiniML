@@ -19,6 +19,7 @@ type exp =
   | LetRecExp of id * id * exp * exp
   | FunExp of id * exp
   | AppExp of exp * exp
+  | MatchListExp of id * exp * id * id * exp
 
 type program =
     Exp of exp
