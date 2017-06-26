@@ -14,7 +14,7 @@ let fold_args args body =
 let fold_let bind body =
   fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
 %}
-%token LPAREN RPAREN SEMISEMI
+%token LPAREN RPAREN LBRACKET RBRACKET SEMISEMI
 %token PLUS MINUS MULT LT ANDAND OROR EQ
 %token IF THEN ELSE LET REC IN ANDLIT TRUE FALSE
 %token FUN RARROW

@@ -19,6 +19,8 @@ rule main = parse
   {Parser.INTV (int_of_string (Lexing.lexeme lexbuf)) }
 | "("     { Parser.LPAREN }
 | ")"     { Parser.RPAREN }
+| "["     { Parser.LBRACKET }
+| "]"     { Parser.RBRACKET }
 | ";;"    { Parser.SEMISEMI }
 | "+"     { Parser.PLUS }
 | "-"     { Parser.MINUS }
