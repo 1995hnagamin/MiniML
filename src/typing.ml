@@ -120,6 +120,9 @@ let rec ty_exp tyenv = function
       let (eqs3, ty) = ([(ranty, ty1)], ty2) in
       let s = unify ((eqs_of_subst s1) @ (eqs_of_subst s2) @ eqs3) in
       (s, subst_type s ty)
+  | EmptyList ->
+    let elemty = TyVar (fresh_tyvar ()) in
+    ([], TyList elemty)
 
 let ty_letdecl tyenv (id, exp) =
   let (_, ty) = ty_exp tyenv exp in
