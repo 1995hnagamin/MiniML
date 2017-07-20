@@ -16,7 +16,9 @@ let subst_type s t =
       TyInt -> TyInt
     | TyBool -> TyBool
     | TyFun (a, b) ->
-        TyFun (subst_ty a (source, target), subst_ty b (source, target))
+      TyFun (subst_ty a (source, target), subst_ty b (source, target))
+    | TyList a ->
+      TyList (subst_ty a (source, target))
     | TyVar x ->
         if x = source then target else (TyVar x)
   in
