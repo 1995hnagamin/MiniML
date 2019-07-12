@@ -15,8 +15,6 @@ let fold_args args body =
 let fold_argsd args body =
   fold_right (fun x body -> DFunExp (x, body)) body args
 
-let fold_let bind body =
-  fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MINUS MULT LT ANDAND OROR EQ
