@@ -15,8 +15,6 @@ let fold_args args body =
 let fold_argsd args body =
   fold_right (fun x body -> DFunExp (x, body)) body args
 
-let fold_let bind body =
-  fold_right (fun (x,v) body -> LetExp (x, v, body)) body bind
 %}
 %token LPAREN RPAREN SEMISEMI
 %token PLUS MINUS MULT LT ANDAND OROR EQ
@@ -89,7 +87,7 @@ IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-  LET Binding IN Expr { fold_let $2 $4 }
+  LET Binding IN Expr { LetExp ($2, $4) }
 
 LetRecExpr :
     LET REC ID EQ FUN ID RARROW Expr IN Expr {

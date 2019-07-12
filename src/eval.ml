@@ -60,9 +60,12 @@ let rec eval_exp env = function
         BoolV true  -> eval_exp env exp2
       | BoolV false -> eval_exp env exp3
       | _ -> err ("Test expression must be boolean: if"))
-  | LetExp (x, exp, body) ->
-      let v = eval_exp env exp in
-      let newenv = Environment.extend x v env in
+  | LetExp (binds, body) ->
+      let current_env = env in
+      let newenv = fold_left (fun env' (x, exp) ->
+          let v = eval_exp current_env exp in
+          Environment.extend x v env')
+          current_env binds in
       eval_exp newenv body
   | LetRecExp (id, para, exp1, exp2) ->
       let dummyenv = ref Environment.empty in
