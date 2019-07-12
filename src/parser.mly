@@ -89,7 +89,7 @@ IfExpr :
     IF Expr THEN Expr ELSE Expr { IfExp ($2, $4, $6) }
 
 LetExpr :
-  LET Binding IN Expr { fold_let $2 $4 }
+  LET Binding IN Expr { LetExp ($2, $4) }
 
 LetRecExpr :
     LET REC ID EQ FUN ID RARROW Expr IN Expr {
