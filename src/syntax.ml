@@ -13,7 +13,7 @@ type exp =
   | BinOp of binOp * exp * exp
   | UniOp of uniOp * exp
   | IfExp of exp * exp * exp
-  | LetExp of id * exp * exp
+  | LetExp of (id * exp) list  * exp
   | LetRecExp of id * id * exp * exp
   | FunExp of id * exp
   | DFunExp of id * exp
